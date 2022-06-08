@@ -14,6 +14,7 @@ key = ""
 ENEMY_ICON = 'E'
 inventory = {"Heart_DJ": 0, "Compass": 0, "Trident": 0}
 level = 1
+hitpoints = 20
 
 def create_player():
     '''
@@ -23,7 +24,7 @@ def create_player():
     Returns:
     dictionary
     '''
-    player = {"Player_icon": PLAYER_ICON, "position_x": position_x, "position_y": position_y, "Inventory": inventory}
+    player = {"Player_icon": PLAYER_ICON, "position_x": position_x, "position_y": position_y, "Inventory": inventory, "HP": hitpoints}
     return player
 
 def create_enemy():
@@ -58,15 +59,13 @@ def main_game(level):
         for item, value in player["Inventory"].items():
             line += f"{item}: {value} "
         print(line)
+        print(f'HP: {player["HP"]}')
         engine.check_movement(board, player, enemy, level)
         util.clear_screen()
 
 
 def main():
-    #level = 1
-    #while level <= 3:
     main_game(level)
-    #    level += 1
 
 if __name__ == '__main__':
     main()

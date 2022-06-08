@@ -1,9 +1,11 @@
 from os import initgroups
 #from main import BOARD_WIDTH, BOARD_HEIGHT
 import util
-from random import choice, random
+#from random import choice, random
 import sys
 import main
+import time
+import random
 
 
 def create_board_one(width, height):
@@ -113,17 +115,6 @@ def create_board_three(width, height):
     return board
 
 
-# def add_correct_walls(level):
-#     walls = ""
-#     if level == 0:
-#         walls = "X"
-#     if level == 1:
-#         walls = "X"
-#     if level == 2:
-#         walls = "X"
-#     return walls
-
-
 def put_player_on_board(board, player):
     '''
     Modifies the game board by placing the player icon at its coordinates.
@@ -200,24 +191,17 @@ def check_movement(board, player, enemy, level):
             return position
 
 
-def check_for_door(board, player):  #!NOT USED
-    level = 1
-    door = ["#"]
-    position = board[player["position_y"]][player["position_x"]]
-    if position in door:
-        level += 1
-    return level
-
 def place_items(board):
+    obstacles = ["C", "T", "H", "X", "#", "E"]
     items = ["H", "C", "T"]
-    board[15][7] = items[0]
-    board[15][3] = items[1]
-    board[15][5] = items[2]
+    for index in range(3):
+        item_pos_x = random.randint(2, 18)
+        item_pos_y = random.randint(2, 28)
+        if board[item_pos_x][item_pos_y] not in obstacles:
+            board[item_pos_x][item_pos_y] = items[index]
     return board
 
 def check_board_items(board, player):
-    # items_on_board = items()
-    # items_on_board = player["Inventory"].items()
     items_on_board = ["H", "C", "T"]
     position = board[player["position_y"]][player["position_x"]]
 
@@ -230,15 +214,19 @@ def check_board_items(board, player):
             player["Inventory"]["Trident"] += 1
 
 def check_for_enemy(board, player, enemy):
-    interaction = choice(["WIN!", "LOSE!"])
+    interaction = random.choice(["WIN!", "LOSE!"])
     position = board[player["position_y"]][player["position_x"]]
     if position == "E":
         print(interaction)
+        if interaction == "LOSE!":
+            player["HP"] -= 1
+            time.sleep(1)
+        else:
+            time.sleep(1)
+
+
 
 
 def place_enemy(board, enemy):
-    # board[enemy1["enemy_position_y"]][enemy1["enemy_position_x"]] = enemy1["Enemy_icon"]
-    # board[enemy2["enemy_position_y"]][enemy2["enemy_position_x"]] = enemy2["Enemy_icon"]
-    # board[enemy3["enemy_position_y"]][enemy3["enemy_position_x"]] = enemy3["Enemy_icon"]
     board[enemy["enemy_position_y"]][enemy["enemy_position_x"]] = enemy["Enemy_icon"]
     return board
