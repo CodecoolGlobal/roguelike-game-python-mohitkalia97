@@ -1,7 +1,5 @@
 from os import initgroups
-#from main import BOARD_WIDTH, BOARD_HEIGHT
 import util
-#from random import choice, random
 import sys
 import main
 import time
@@ -115,7 +113,7 @@ def create_board_three(width, height):
     return board
 
 
-def put_player_on_board(board, player):
+def put_player_on_board(board, player, health):
     '''
     Modifies the game board by placing the player icon at its coordinates.
 
@@ -128,8 +126,8 @@ def put_player_on_board(board, player):
     '''
     board[player['position_y']][player['position_x']] = player['Player_icon']
     return board
-    
-    
+
+
 def check_movement(board, player, enemy, level):
     """Move the player and check collisions with the walls
     Args:
@@ -150,7 +148,6 @@ def check_movement(board, player, enemy, level):
             return level
 
         if char == 'd' and board[player["position_y"]][player["position_x"]+1] not in wall:
-            #check_for_door(board, player)
             board[player["position_y"]][player["position_x"]] = ' '
             player["position_x"] = player["position_x"] + 1
             check_board_items(board, player)
@@ -159,7 +156,6 @@ def check_movement(board, player, enemy, level):
             return False
 
         elif char == 'a' and board[player["position_y"]][player["position_x"]-1] not in wall:
-            #check_for_door(board, player)
             board[player["position_y"]][player["position_x"]] = ' '
             player["position_x"] = player["position_x"] - 1
             check_board_items(board, player)
@@ -168,7 +164,6 @@ def check_movement(board, player, enemy, level):
             return False
 
         elif char == 'w' and board[player["position_y"]-1][player["position_x"]] not in wall:
-            #check_for_door(board, player)
             board[player["position_y"]][player["position_x"]] = ' '
             player["position_y"] = player["position_y"] - 1
             check_board_items(board, player)
@@ -177,7 +172,6 @@ def check_movement(board, player, enemy, level):
             return False
 
         elif char == 's' and board[player["position_y"]+1][player["position_x"]] not in wall:
-            #check_for_door(board, player)
             board[player["position_y"]][player["position_x"]] = ' '
             player["position_y"] = player["position_y"] + 1
             check_board_items(board, player)
@@ -186,15 +180,15 @@ def check_movement(board, player, enemy, level):
             return False
 
         elif char == 'q':
+            util.clear_screen()
             sys.exit()
         else:
             return position
 
-
 def place_items(board):
     obstacles = ["C", "T", "H", "X", "#", "E"]
     items = ["H", "C", "T"]
-    for index in range(3):
+    for index in range(len(items)):
         item_pos_x = random.randint(2, 18)
         item_pos_y = random.randint(2, 28)
         if board[item_pos_x][item_pos_y] not in obstacles:
@@ -206,8 +200,8 @@ def check_board_items(board, player):
     position = board[player["position_y"]][player["position_x"]]
 
     if position in items_on_board:
-        if position == "H":  #Heart_DJ durch Emoji bzw. Buchstaben ersetzen
-            player["Inventory"]["Heart_DJ"] += 1
+        if position == "H":
+            player["Inventory"]["Heart_of_Davy_Jones"] += 1
         elif position == "C":
             player["Inventory"]["Compass"] += 1
         elif position == "T":
@@ -220,13 +214,25 @@ def check_for_enemy(board, player, enemy):
         print(interaction)
         if interaction == "LOSE!":
             player["HP"] -= 1
-            time.sleep(1)
+            time.sleep(0.5)
         else:
-            time.sleep(1)
-
-
+            time.sleep(0.5)
 
 
 def place_enemy(board, enemy):
     board[enemy["enemy_position_y"]][enemy["enemy_position_x"]] = enemy["Enemy_icon"]
     return board
+
+def dead():
+    util.clear_screen()
+    print("YOU DIED!")
+    time.sleep(3)
+    util.clear_screen()
+    sys.exit(0)
+
+def end_of_game():
+    util.clear_screen()
+    print("YOU CLEARED THE GAME!")
+    time.sleep(3)
+    util.clear_screen()
+    sys.exit(0)
