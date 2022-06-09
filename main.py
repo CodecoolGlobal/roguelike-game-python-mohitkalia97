@@ -3,6 +3,8 @@ import engine
 import ui
 import random
 import sys
+import time
+from ART import logo, girls, intro
 
 PLAYER_ICON = '@'
 PLAYER_START_X = 1
@@ -13,10 +15,11 @@ BOARD_WIDTH = 30
 BOARD_HEIGHT = 20
 key = ""
 ENEMY_ICON = 'E'
-inventory = {"Heart_of_Davy_Jones": 0, "Compass": 0, "Trident": 0}
+Inventory = {"Heart_of_Davy_Jones": 0, "Compass": 0, "Trident": 0}
 level = 1
 HITPOINTS = 3
 AMOUNT_OF_ENEMIES = 5
+
 
 def create_player():
     '''
@@ -26,8 +29,9 @@ def create_player():
     Returns:
     dictionary
     '''
-    player = {"Player_icon": PLAYER_ICON, "position_x": position_x, "position_y": position_y, "Inventory": inventory, "HP": HITPOINTS}
+    player = {"Player_icon": PLAYER_ICON, "position_x": position_x, "position_y": position_y, "Inventory": Inventory, "HP": HITPOINTS}
     return player
+
 
 def create_enemy():
     enemy_position_x = random.randint(2, 28)
@@ -36,15 +40,20 @@ def create_enemy():
     return enemy
 
 
-def main_game(level):
-    obstacles = ["C", "T", "H", "X", "#", "E"]
-    player = create_player()
+def main_game(level, player, Inventory):
+    obstacles = ["C", "T", "H", "#", "E", "@", "X"]
+    player["position_y"] = 18
+    player["position_x"] = 1
     if level == 1:
         board = engine.create_board_one(BOARD_WIDTH, BOARD_HEIGHT)
+        util.clear_screen()
+        print(intro)
+        time.sleep(12)
     elif level == 2:
         board = engine.create_board_two(BOARD_WIDTH, BOARD_HEIGHT)
     elif level == 3:
         board = engine.create_board_three(BOARD_WIDTH, BOARD_HEIGHT)
+        board[10][15] = "?"
     if level != 3:
         engine.place_items(board)
     for i in range(AMOUNT_OF_ENEMIES):
@@ -56,8 +65,8 @@ def main_game(level):
 
     is_running = True
     while is_running:
-        health = player["HP"]
-        engine.put_player_on_board(board, player, health)
+        engine.put_player_on_board(board, player)
+        print(f"Level: {level}")
         ui.display_board(board)
         line = ""
         for item, value in player["Inventory"].items():
@@ -65,7 +74,7 @@ def main_game(level):
         print()
         print(line)
         print(f'HP: {player["HP"]}')
-        engine.check_movement(board, player, enemy, level)
+        engine.check_movement(board, player, enemy, level, Inventory)
         util.clear_screen()
 
         if player["HP"] == 0:
@@ -75,19 +84,18 @@ def main_game(level):
 
 def main():
     util.clear_screen()
+    player = create_player()
     is_running2 = True
     while is_running2:
         util.clear_screen()
-        print()
-        print("SOMALI PIRATES Ltd")
-        print()
+        print(logo + girls)
         print("[P]lay Game")
-        print("[E]xit]")
+        print("[E]xit")
         key = util.key_pressed()
     
         if key.upper() == "P":
             is_running2 = False
-            main_game(level)
+            main_game(level, player, Inventory)
         elif key.upper() == "E":
             util.clear_screen()
             sys.exit(0)
@@ -97,10 +105,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-# TODO: check amount of items collected to proceed to next level
-# TODO: check amount of items on the board
-# TODO: dont reset hp every level?
-# TODO: add final boss / play tictactoe against him
-# TODO: make shit fancy
