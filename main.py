@@ -6,7 +6,7 @@ import sys
 import time
 from ART import logo, girls, intro
 
-PLAYER_ICON = '@'
+PLAYER_ICON = '😡'
 PLAYER_START_X = 1
 PLAYER_START_Y = 18
 position_x = 1
@@ -14,8 +14,8 @@ position_y = 18
 BOARD_WIDTH = 30
 BOARD_HEIGHT = 20
 key = ""
-ENEMY_ICON = 'E'
-Inventory = {"Heart_of_Davy_Jones": 0, "Compass": 0, "Trident": 0}
+ENEMY_ICON = '💀'
+Inventory = {"💝": 0, "🧭": 0, "🔱": 0}
 level = 1
 HITPOINTS = 3
 AMOUNT_OF_ENEMIES = 5
@@ -29,7 +29,13 @@ def create_player():
     Returns:
     dictionary
     '''
-    player = {"Player_icon": PLAYER_ICON, "position_x": position_x, "position_y": position_y, "Inventory": Inventory, "HP": HITPOINTS}
+    player = {
+        "Player_icon": PLAYER_ICON,
+        "position_x": position_x,
+        "position_y": position_y,
+        "Inventory": Inventory,
+        "HP": HITPOINTS,
+        }
     return player
 
 
@@ -41,19 +47,19 @@ def create_enemy():
 
 
 def main_game(level, player, Inventory):
-    obstacles = ["C", "T", "H", "#", "E", "@", "X"]
+    obstacles = ["🧭", "🔱", "💝", "🟦", "💀", "😡", "🌊"]
     player["position_y"] = 18
     player["position_x"] = 1
     if level == 1:
         board = engine.create_board_one(BOARD_WIDTH, BOARD_HEIGHT)
         util.clear_screen()
         print(intro)
-        time.sleep(12)
+        time.sleep(1)
     elif level == 2:
         board = engine.create_board_two(BOARD_WIDTH, BOARD_HEIGHT)
     elif level == 3:
         board = engine.create_board_three(BOARD_WIDTH, BOARD_HEIGHT)
-        board[10][15] = "?"
+        board[10][15] = "🥸 "
     if level != 3:
         engine.place_items(board)
     for i in range(AMOUNT_OF_ENEMIES):
@@ -92,7 +98,6 @@ def main():
         print("[P]lay Game")
         print("[E]xit")
         key = util.key_pressed()
-    
         if key.upper() == "P":
             is_running2 = False
             main_game(level, player, Inventory)

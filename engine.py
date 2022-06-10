@@ -1,13 +1,16 @@
-from os import initgroups
-import os
 import TTT_Boss.tic_tac_toe as tic_tac_toe
 import util
 import sys
 import main
 import time
 import random
-import subprocess
-from ART import *
+from ART import (
+    win,
+    lose,
+    boss_talk,
+    you_died,
+    cleared_game,
+)
 
 
 def create_board_one(width, height):
@@ -21,10 +24,10 @@ def create_board_one(width, height):
     Returns:
     list: Game board
     '''
-    wall = "X"
+    wall = "🌊"
     board = []
     upper = wall * width
-    door = "#"
+    door = "🟦"
 
     for row in range(height):
         line = []
@@ -45,7 +48,7 @@ def create_board_one(width, height):
                 elif col == 12 and row in range(9, 17):
                     line.append(wall)
                 else:
-                    line.append(' ')
+                    line.append('🌀')
             board.append(line)
     return board
 
@@ -61,11 +64,10 @@ def create_board_two(width, height):
     Returns:
     list: Game board
     '''
-
-    wall = "X"
+    wall = "🌊"
     board = []
     upper = wall * width
-    door = "#"
+    door = "🟦"
 
     for row in range(height):
         line = []
@@ -84,7 +86,7 @@ def create_board_two(width, height):
                 elif col == 5 and row in range(3, 30):
                     line.append(wall)
                 else:
-                    line.append(' ')
+                    line.append('🌀')
             board.append(line)
     return board
 
@@ -100,8 +102,7 @@ def create_board_three(width, height):
     Returns:
     list: Game board
     '''
-
-    wall = "X"
+    wall = "🌊"
     board = []
     upper = wall * width
 
@@ -114,7 +115,7 @@ def create_board_three(width, height):
                 if col == 0 or col == width - 1:
                     line.append(wall)
                 else:
-                    line.append(' ')
+                    line.append('🌀')
             board.append(line)
     return board
 
@@ -130,8 +131,6 @@ def put_player_on_board(board, player):
     Returns:
     Nothing
     '''
-    # player['position_y'] = 18
-    # player['position_x'] = 1
     board[player['position_y']][player['position_x']] = player['Player_icon']
     return board
 
@@ -144,18 +143,21 @@ def check_movement(board, player, enemy, level, Inventory):
     Returns:
     position: tuple with user current position
     """
-    wall = ['X', '#']
+    wall = ['🌊', '🟦']
     position = ()
     while True:
         char = util.key_pressed()
 
-        if board[player["position_y"]][player["position_x"] + 1] in wall[1] and Inventory["Heart_of_Davy_Jones"] == Inventory["Compass"] == Inventory["Trident"] == level:
+        if (
+            board[player["position_y"]][player["position_x"] + 1] in wall[1] and
+            Inventory["💝"] == Inventory["🧭"] == Inventory["🔱"] == level
+        ):
             level += 1
             main.main_game(level, player, Inventory)
             return level
 
         if char == 'd' and board[player["position_y"]][player["position_x"]+1] not in wall:
-            board[player["position_y"]][player["position_x"]] = ' '
+            board[player["position_y"]][player["position_x"]] = '🌀'
             player["position_x"] = player["position_x"] + 1
             check_board_items(board, player)
             check_boss(board, player)
@@ -164,7 +166,7 @@ def check_movement(board, player, enemy, level, Inventory):
             return False
 
         elif char == 'a' and board[player["position_y"]][player["position_x"]-1] not in wall:
-            board[player["position_y"]][player["position_x"]] = ' '
+            board[player["position_y"]][player["position_x"]] = '🌀'
             player["position_x"] = player["position_x"] - 1
             check_board_items(board, player)
             check_boss(board, player)
@@ -173,7 +175,7 @@ def check_movement(board, player, enemy, level, Inventory):
             return False
 
         elif char == 'w' and board[player["position_y"]-1][player["position_x"]] not in wall:
-            board[player["position_y"]][player["position_x"]] = ' '
+            board[player["position_y"]][player["position_x"]] = '🌀'
             player["position_y"] = player["position_y"] - 1
             check_board_items(board, player)
             check_boss(board, player)
@@ -182,7 +184,7 @@ def check_movement(board, player, enemy, level, Inventory):
             return False
 
         elif char == 's' and board[player["position_y"]+1][player["position_x"]] not in wall:
-            board[player["position_y"]][player["position_x"]] = ' '
+            board[player["position_y"]][player["position_x"]] = '🌀'
             player["position_y"] = player["position_y"] + 1
             check_board_items(board, player)
             check_boss(board, player)
@@ -198,8 +200,8 @@ def check_movement(board, player, enemy, level, Inventory):
 
 
 def place_items(board):
-    obstacles = ["H", "C", "T", "#", "E", "@", "X", "?"]
-    items = ["H", "C", "T"]
+    obstacles = ["💝", "🧭", "🔱", "🟦", "💀", "😡", "🌊", "🥸"]
+    items = ["💝", "🧭", "🔱"]
     for index in range(len(items)):
         item_pos_x = random.randint(2, 18)
         item_pos_y = random.randint(2, 28)
@@ -211,22 +213,22 @@ def place_items(board):
 
 
 def check_board_items(board, player):
-    items_on_board = ["H", "C", "T"]
+    items_on_board = ["💝", "🧭", "🔱"]
     position = board[player["position_y"]][player["position_x"]]
 
     if position in items_on_board:
-        if position == "H":
-            player["Inventory"]["Heart_of_Davy_Jones"] += 1
-        elif position == "C":
-            player["Inventory"]["Compass"] += 1
-        elif position == "T":
-            player["Inventory"]["Trident"] += 1
+        if position == "💝":
+            player["Inventory"]["💝"] += 1
+        elif position == "🧭":
+            player["Inventory"]["🧭"] += 1
+        elif position == "🔱":
+            player["Inventory"]["🔱"] += 1
 
 
 def check_for_enemy(board, player, enemy):
     interaction = random.choice([win, lose])
     position = board[player["position_y"]][player["position_x"]]
-    if position == "E":
+    if position == "💀":
         print(interaction)
         if interaction == lose:
             player["HP"] -= 1
@@ -242,13 +244,12 @@ def place_enemy(board, enemy):
 
 def check_boss(board, player):
     position = board[player["position_y"]][player["position_x"]]
-    if position == "?":
+    if position == "🥸 ":
         util.clear_screen()
         print(boss_talk)
-        time.sleep(12)
+        time.sleep(10)
         util.clear_screen()
         tic_tac_toe.main_menu()
-
         if tic_tac_toe.get_winning_player(board) == "X":
             util.clear_screen()
             end_of_game()
@@ -256,7 +257,7 @@ def check_boss(board, player):
             util.clear_screen()
             dead()
         else:
-            dead()
+            end_of_game()
 
 
 def dead():
